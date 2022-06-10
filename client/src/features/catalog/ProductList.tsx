@@ -14,11 +14,7 @@ const ProductList = ({products}: Props) => {
     {products.map(product => (
       <Grid item xs={3} key = {product.id}>
         <ProductCard product = {product} />
-        {/* <ListItemAvatar>
-            <Avatar src = {product.pictureUrl} />
-        </ListItemAvatar>
-        <ListItemText>{product.name} - {product.price}</ListItemText> */}
-        </Grid>
+      </Grid>
     ))}
   </Grid>
   )
