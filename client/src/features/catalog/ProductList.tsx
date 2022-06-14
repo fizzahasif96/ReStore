@@ -1,8 +1,6 @@
-import React from 'react'
 import ProductCard from './ProductCard'
 import {Product} from '../../app/models/Product';
 import { Grid } from '@mui/material';
-
 
 interface Props {
     products : Product[];

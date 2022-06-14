@@ -1,23 +1,24 @@
-import { Avatar, Grid, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import agent from '../../app/api/agent';
 import LoadingComponent from '../../app/layout/LoadingComponent';
 import {Product} from '../../app/models/Product';
+import { useAppDispatch, useAppSelector } from '../../app/store/ConfigureStore';
+import { fetchProductsAsync, productSelectors } from './CatalogSlice';
 import ProductList from './ProductList';
 
 
 const Catalog = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  const products = useAppSelector(productSelectors.selectAll)
+  const {productsLoaded, status} = useAppSelector(state => state.catalog)
+  const dispatch = useAppDispatch()
+
 
   useEffect(() => {
-    agent.Catalog.list()
-    .then(products => setProducts(products))
-    .catch(error => console.log(error))
-    .finally(() => setLoading(false))
-  }, []);
+    if(!productsLoaded) dispatch(fetchProductsAsync())
+  }, [productsLoaded, dispatch]);
 
-  if(loading) return <LoadingComponent message='Loading Products...'/>
+  if(status.includes('pending')) return <LoadingComponent message='Loading Products...'/>
 
   return (
     <>

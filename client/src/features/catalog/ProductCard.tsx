@@ -1,14 +1,12 @@
-
-import { SettingsBackupRestoreTwoTone } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import { Avatar, Card, Button, CardActions, CardContent, CardHeader, CardMedia, Typography } from '@mui/material';
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom';
 import agent from '../../app/api/agent';
-import { useStoreContext } from '../../app/context/StoreContext';
 import { Product } from '../../app/models/Product';
+import { useAppDispatch, useAppSelector } from '../../app/store/ConfigureStore';
 import { currencyFormat } from '../../app/util/util';
-import ProductList from './ProductList'
+import { addBasketItemAsync, setBasket } from '../basket/BasketSlice';
 
 
 interface Props {
@@ -16,15 +14,18 @@ interface Props {
   }
 const ProductCard = ({product} : Props) => {
 
-  const {setBasket} = useStoreContext()
-  const [loading, setLoading] = useState(false);
-  function handleAddItem(productId : number){
-    setLoading(true);
-    agent.Basket.addItem(productId)
-    .then(basket => setBasket(basket))
-    .catch(error => console.log(error))
-    .finally(() => setLoading(false));
-  }
+  //const {setBasket} = useStoreContext()
+  const dispatch = useAppDispatch();
+  const {status} = useAppSelector(state => state.basket)
+  // const [loading, setLoading] = useState(false);
+
+  // function handleAddItem(productId : number){
+  //   setLoading(true);
+  //   agent.Basket.addItem(productId)
+  //   .then(basket => dispatch(setBasket(basket)))
+  //   .catch(error => console.log(error))
+  //   .finally(() => setLoading(false));
+  // }
 
   return (
     <Card sx={{ maxWidth: 345 }}>
@@ -52,8 +53,8 @@ const ProductCard = ({product} : Props) => {
     </CardContent>
     <CardActions>
     <LoadingButton
-        loading={loading}
-        onClick={() => handleAddItem(product.id)}
+        loading={status.includes('pendingAddItem' + product.id)}
+        onClick={() => dispatch(addBasketItemAsync({productId: product.id}))}
         size="small" >
         Add to cart
     </LoadingButton>
